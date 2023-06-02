@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from streamlit_chat import message
 
@@ -196,6 +197,7 @@ def update_model_on_mode_change():
     if "chain" in st.session_state and app_can_be_started():
         update_chain()
 
+os.environ["BROWSER"] = "chrome"  # Replace "chrome" with your preferred browser
 
 # Sidebar with Authentication and Advanced Options
 with st.sidebar:

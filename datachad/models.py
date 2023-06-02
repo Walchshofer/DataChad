@@ -62,51 +62,55 @@ class MODELS(Enum):
 
 def get_model() -> BaseLanguageModel:
     with st.session_state["info_container"], st.spinner("Loading Model..."):
-        match st.session_state["model"].name:
-            case MODELS.GPT35TURBO.name:
-                model = ChatOpenAI(
-                    model_name=st.session_state["model"].name,
-                    temperature=st.session_state["temperature"],
-                    openai_api_key=st.session_state["openai_api_key"],
-                )
-            case MODELS.GPT4.name:
-                model = ChatOpenAI(
-                    model_name=st.session_state["model"].name,
-                    temperature=st.session_state["temperature"],
-                    openai_api_key=st.session_state["openai_api_key"],
-                )
-            case MODELS.GPT4ALL.name:
-                model = GPT4All(
-                    model=st.session_state["model"].path,
-                    n_ctx=st.session_state["model_n_ctx"],
-                    backend="gptj",
-                    temp=st.session_state["temperature"],
-                    verbose=True,
-                    callbacks=[StreamingStdOutCallbackHandler()],
-                )
-            # Added models need to be cased here
-            case _default:
-                msg = f"Model {st.session_state['model']} not supported!"
-                logger.error(msg)
-                st.error(msg)
-                exit
+        model_name = st.session_state["model"].name
+        temperature = st.session_state["temperature"]
+        openai_api_key = st.session_state["openai_api_key"]
+        model_path = st.session_state["model"].path
+        model_n_ctx = st.session_state["model_n_ctx"]
+        
+        if model_name == MODELS.GPT35TURBO.name:
+            model = ChatOpenAI(
+                model_name=model_name,
+                temperature=temperature,
+                openai_api_key=openai_api_key,
+            )
+        elif model_name == MODELS.GPT4.name:
+            model = ChatOpenAI(
+                model_name=model_name,
+                temperature=temperature,
+                openai_api_key=openai_api_key,
+            )
+        elif model_name == MODELS.GPT4ALL.name:
+            model = GPT4All(
+                model=model_path,
+                n_ctx=model_n_ctx,
+                backend="gptj",
+                temp=temperature,
+                verbose=True,
+                callbacks=[StreamingStdOutCallbackHandler()],
+            )
+        else:
+            msg = f"Model {model_name} not supported!"
+            logger.error(msg)
+            st.error(msg)
+            exit()
     return model
 
 
 def get_embeddings() -> Embeddings:
-    match st.session_state["model"].embedding:
-        case EMBEDDINGS.OPENAI:
-            embeddings = OpenAIEmbeddings(
-                disallowed_special=(), openai_api_key=st.session_state["openai_api_key"]
-            )
-        case EMBEDDINGS.HUGGINGFACE:
-            embeddings = HuggingFaceEmbeddings(
-                model_name=EMBEDDINGS.HUGGINGFACE, cache_folder=str(MODEL_PATH)
-            )
-        # Added embeddings need to be cased here
-        case _default:
-            msg = f"Embeddings {st.session_state['embeddings']} not supported!"
-            logger.error(msg)
-            st.error(msg)
-            exit
+    embedding_type = st.session_state["model"].embedding
+    if embedding_type == EMBEDDINGS.OPENAI:
+        embeddings = OpenAIEmbeddings(
+            disallowed_special=(), openai_api_key=st.session_state["openai_api_key"]
+        )
+    elif embedding_type == EMBEDDINGS.HUGGINGFACE:
+        embeddings = HuggingFaceEmbeddings(
+            model_name=EMBEDDINGS.HUGGINGFACE, cache_folder=str(MODEL_PATH)
+        )
+    else:
+        msg = f"Embeddings {embedding_type} not supported!"
+        logger.error(msg)
+        st.error(msg)
+        exit()
     return embeddings
+
