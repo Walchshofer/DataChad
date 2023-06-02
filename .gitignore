@@ -1,3 +1,42 @@
+# Python-specific
+*.pyc
+*.pyo
+*.pyd
+*.pyi
+*.pyc/
+
+# Environment
+.env
+
+# Logs
+/logs/
+
+# Compiled files
+*.class
+*.o
+
+# IDE-specific
+.vscode/
+.idea/
+*.code-workspace
+
+# Data directories
+/data/
+/dataset_meta.json
+/version_control_info.json
+
+# Model files
+/models/
+
+# Other generated files
+/dist/
+/build/
+
+# Miscellaneous
+*.swp
+.DS_Store
+
+# Additional entries
 data
 models
 __pycache__
