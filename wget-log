@@ -1,0 +1,11 @@
+--2023-06-09 06:47:35--  https://packages.microsoft.com/keys/microsoft.asc
+Resolving packages.microsoft.com (packages.microsoft.com)... 40.114.136.21, 13.107.236.201, 150.171.21.201, ...
+Connecting to packages.microsoft.com (packages.microsoft.com)|40.114.136.21|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 983 [application/octet-stream]
+Saving to: ‘microsoft.asc’
+
+microsoft.asc                          0%[                                                                      ]       0  --.-KB/s               microsoft.asc                        100%[=====================================================================>]     983  --.-KB/s    in 0s      
+
+2023-06-09 06:47:35 (1.08 GB/s) - ‘microsoft.asc’ saved [983/983]
+
