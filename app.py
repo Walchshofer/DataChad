@@ -34,7 +34,7 @@ from datachad.utils import (
 )
 
 # Page options and header
-st.set_option("client.showErrorDetails", True)
+st.set_option("client.showErrorDetails", False)
 st.set_page_config(
     page_title=APP_NAME, page_icon=PAGE_ICON, initial_sidebar_state="expanded"
 )
@@ -102,86 +102,85 @@ def authentication_form() -> None:
             placeholder="Optional, using ours if empty",
         )
         activeloop_org_name = st.text_input(
-            "ActiveLoop Organisation Name",
+            "ActiveLoop Organization Name",
             type="password",
             help=ACTIVELOOP_HELP,
             placeholder="Optional, using ours if empty",
         )
-        submitted = st.form_submit_button("Submit")
-        if submitted:
+        if submitted := st.form_submit_button("Submit"):
             authenticate(openai_api_key, activeloop_token, activeloop_org_name)
 
 
 def advanced_options_form() -> None:
-    # Input Form that takes advanced options and rebuilds chain with them
-    advanced_options = st.checkbox(
-        "Advanced Options", help="Caution! This may break things!"
-    )
-    if advanced_options:
-        with st.form("advanced_options"):
-            st.selectbox(
-                "model",
-                options=MODELS.for_mode(st.session_state["mode"]),
-                help=f"Learn more about which models are supported [here]({PROJECT_URL})",
-                key="model",
-            )
-            col1, col2 = st.columns(2)
-            col1.number_input(
-                "temperature",
-                min_value=0.0,
-                max_value=1.0,
-                value=TEMPERATURE,
-                help="Controls the randomness of the language model output",
-                key="temperature",
-            )
-            col2.number_input(
-                "max_tokens",
-                min_value=1,
-                max_value=30000,
-                value=MAX_TOKENS,
-                help="Limits the documents returned from database based on number of tokens",
-                key="max_tokens",
-            )
-            col1.number_input(
-                "k_fetch",
-                min_value=1,
-                max_value=1000,
-                value=FETCH_K,
-                help="The number of documents to pull from the vector database",
-                key="k_fetch",
-            )
-            col2.number_input(
-                "k",
-                min_value=1,
-                max_value=100,
-                value=K,
-                help="The number of most similar documents to build the context from",
-                key="k",
-            )
-            col1.number_input(
-                "chunk_size",
-                min_value=1,
-                max_value=100000,
-                value=CHUNK_SIZE,
-                help=(
-                    "The size at which the text is divided into smaller chunks "
-                    "before being embedded.\n\nChanging this parameter makes re-embedding "
-                    "and re-uploading the data to the database necessary "
-                ),
-                key="chunk_size",
-            )
-            col2.number_input(
-                "chunk_overlap",
-                min_value=0,
-                max_value=100000,
-                value=CHUNK_OVERLAP,
-                help="The size of overlap between splitted document chunks",
-                key="chunk_overlap",
-            )
+    if not (
+        advanced_options := st.checkbox(
+            "Advanced Options", help="Caution! This may break things!"
+        )
+    ):
+        return
+    with st.form("advanced_options"):
+        st.selectbox(
+            "model",
+            options=MODELS.for_mode(st.session_state["mode"]),
+            help=f"Learn more about which models are supported [here]({PROJECT_URL})",
+            key="model",
+        )
+        col1, col2 = st.columns(2)
+        col1.number_input(
+            "temperature",
+            min_value=0.0,
+            max_value=1.0,
+            value=TEMPERATURE,
+            help="Controls the randomness of the language model output",
+            key="temperature",
+        )
+        col2.number_input(
+            "max_tokens",
+            min_value=1,
+            max_value=30000,
+            value=MAX_TOKENS,
+            help="Limits the documents returned from database based on number of tokens",
+            key="max_tokens",
+        )
+        col1.number_input(
+            "k_fetch",
+            min_value=1,
+            max_value=1000,
+            value=FETCH_K,
+            help="The number of documents to pull from the vector database",
+            key="k_fetch",
+        )
+        col2.number_input(
+            "k",
+            min_value=1,
+            max_value=100,
+            value=K,
+            help="The number of most similar documents to build the context from",
+            key="k",
+        )
+        col1.number_input(
+            "chunk_size",
+            min_value=1,
+            max_value=100000,
+            value=CHUNK_SIZE,
+            help=(
+                "The size at which the text is divided into smaller chunks "
+                "before being embedded.\n\nChanging this parameter makes re-embedding "
+                "and re-uploading the data to the database necessary "
+            ),
+            key="chunk_size",
+        )
+        col2.number_input(
+            "chunk_overlap",
+            min_value=0,
+            max_value=100000,
+            value=CHUNK_OVERLAP,
+            help="The size of overlap between splitted document chunks",
+            key="chunk_overlap",
+        )
 
-            applied = st.form_submit_button("Apply")
-            if applied:
-                update_chain()
+        if applied := st.form_submit_button("Apply"):
+            update_chain()
 
 
 def app_can_be_started():
